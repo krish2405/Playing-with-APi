@@ -38,7 +38,7 @@ def user_by_id(request,pk):
         serializer=BreedSerializer(instance=dog,data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data,status='2000')
+            return Response(serializer.data,status='200')
         return Response(serializer.errors,status='300')
 
     
