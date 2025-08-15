@@ -8,11 +8,18 @@ def age_weight(value):
     return value
 
 class BreedSerializer(serializers.ModelSerializer):
+
+    len_name=serializers.SerializerMethodField(method_name="get_len_name")
+
+
     class Meta:
         model=Breed
         # fields="__all__"
-        fields=['id','name','breed']
+        fields=['id','name','breed','len_name']
         read_only_fields=['id']
+
+    def get_len_name(self,object):
+        return len(object.name)
 
       #feild level validation
     def validate_name(self,value):
