@@ -12,7 +12,6 @@ class BreedSerializer(serializers.ModelSerializer):
         model=Breed
         # fields="__all__"
         fields=['id','name','breed']
-        
         read_only_fields=['id']
 
       #feild level validation
