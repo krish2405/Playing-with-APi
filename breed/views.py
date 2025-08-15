@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from .models import Breed
-from .serializer import BreedSerializer
+from .models import Dogs_Info,Prev_Owner
+from .serializer import DogInfoSerializer,Prev_ownerSerilaizer
 from rest_framework.response import Response
 # from rest_framework.decorators import api_view
 from rest_framework.views import APIView
@@ -8,13 +8,13 @@ from rest_framework.views import APIView
 
 class AllDogsAV(APIView):
     def get(self,request):
-        dogs=Breed.objects.all()
-        serializer=BreedSerializer(dogs,many=True)
+        dogs=Dogs_Info.objects.all()
+        serializer=DogInfoSerializer(dogs,many=True)
         return Response(serializer.data,status='200')
     
 
     def post(self,request):
-        serializer=BreedSerializer(data=request.data)
+        serializer=DogInfoSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data,status=201)
@@ -23,20 +23,20 @@ class AllDogsAV(APIView):
 class DogBYidAV(APIView):
     def get(self,request,pk):
         try:
-            dog=Breed.objects.get(pk=pk)
-        except Breed.DoesNotExist:
+            dog=Dogs_Info.objects.get(pk=pk)
+        except Dogs_Info.DoesNotExist:
             return Response(status=404)
         
-        serializer=BreedSerializer(dog)
+        serializer=DogInfoSerializer(dog)
         return Response(serializer.data,status=200)
     
 
     def put(self,request,pk):
         try:
-            dog=Breed.objects.get(pk=pk)
-        except Breed.DoesNotExist:
+            dog=Dogs_Info.objects.get(pk=pk)
+        except Dogs_Info.DoesNotExist:
             return Response(status=404)
-        serializer=BreedSerializer(instance=dog,data=request.data)
+        serializer=DogInfoSerializer(instance=dog,data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data,status='200')
@@ -44,12 +44,59 @@ class DogBYidAV(APIView):
     
     def delete(self,request,pk):
         try:
-            dog=Breed.objects.get(pk=pk)
-        except Breed.DoesNotExist:
+            dog=Dogs_Info.objects.get(pk=pk)
+        except Dogs_Info.DoesNotExist:
             return Response(status=404)
-        serializer=BreedSerializer(dog)
+        serializer=DogInfoSerializer(dog)
         dog.delete()
         return Response(serializer.data, status=204)
+    
+    
+    
+class Prev_OwnerAV(APIView):
+    def get(self,request):
+        try:
+            PreV_ownerlist=Prev_Owner.objects.all()
+        except Prev_Owner.DoesNotExist:
+            return Response(status="400")
+            
+        serializerOW=Prev_ownerSerilaizer(PreV_ownerlist,many=True)
+        return Response(serializerOW.data,status="200")
+    
+    def post(self,request):
+        serializerOW=Prev_ownerSerilaizer(data=request.data)
+        if serializerOW.is_valid():
+            serializerOW.save()
+            return Response(serializerOW.data,status="200")
+        return Response(serializerOW.errors,status="401")
+    
+class Owner_detailAV(APIView):
+    def get(self,request,pk):
+        try:
+            owner=Prev_Owner.objects.get(pk=pk)
+        except Prev_Owner.DoesNotExist:
+            return Response(status="404")
+        serializerOW=Prev_ownerSerilaizer(owner)
+        return Response(serializerOW.data,status="200")
+        
+        
+    def put(self,request,pk):
+        try:
+            owner=Prev_Owner.objects.get(pk=pk)
+        except Prev_Owner.DoesNotExist:
+            return Response(status="401")
+            
+        serializerOW=Prev_ownerSerilaizer(instance=owner,data=request.data)
+        if serializerOW.is_valid():
+            serializerOW.save()
+            return Response(serializerOW.data,status="200")
+        return Response(serializerOW.errors,status="401")
+            
+        
+        
+    
+        
+    
 
 
 ##Using APIViewclass based views
@@ -58,33 +105,33 @@ class DogBYidAV(APIView):
 # @api_view(['GET','POST'])
 # def all_dogs(request):
 #     if request.method=='POST':
-#         serializer=BreedSerializer(data=request.data)
+#         serializer=DogInfoSerializer(data=request.data)
 #         if serializer.is_valid():
 #             serializer.save()
 #             return Response(serializer.data,status=201)
 #         return Response(serializer.errors,status=400)
         
-#     dogs=Breed.objects.all()
-#     serializer=BreedSerializer(dogs,many=True)
+#     dogs=Dogs_Info.objects.all()
+#     serializer=DogInfoSerializer(dogs,many=True)
 #     return Response(serializer.data,status='200')
 
 
 # @api_view(['GET','PUT','DELETE'])
 # def user_by_id(request,pk):
 #     try:
-#         dog=Breed.objects.get(pk=pk)
-#     except Breed.DoesNotExist:
+#         dog=Dogs_Info.objects.get(pk=pk)
+#     except Dogs_Info.DoesNotExist:
 #         return Response(status=404)
     
      
-#     serializer=BreedSerializer(dog)
+#     serializer=DogInfoSerializer(dog)
 #     if request.method=='DELETE':
         
 #         dog.delete()
 #         return Response(serializer.data, status=204)
     
 #     if request.method=='PUT':
-#         serializer=BreedSerializer(instance=dog,data=request.data)
+#         serializer=DogInfoSerializer(instance=dog,data=request.data)
 #         if serializer.is_valid():
 #             serializer.save()
 #             return Response(serializer.data,status='200')

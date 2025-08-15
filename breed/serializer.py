@@ -1,25 +1,25 @@
 from rest_framework import serializers,validators
-from .models import Breed
+from .models import Prev_Owner,Dogs_Info
+from datetime import datetime
+from django.utils import timezone
 
-
-def age_weight(value):
-    if value<=0:
-        raise serializers.ValidationError("Invalid value,less than equal to 0 not expected")
-    return value
-
-class BreedSerializer(serializers.ModelSerializer):
+class DogInfoSerializer(serializers.ModelSerializer):
 
     len_name=serializers.SerializerMethodField(method_name="get_len_name")
-
-
+    day_in_shelter=serializers.SerializerMethodField(method_name="get_days")
+    
     class Meta:
-        model=Breed
-        # fields="__all__"
-        fields=['id','name','breed','len_name']
+        model=Dogs_Info
+        fields="__all__"
+        # fields=['id','name','breed','len_name']
         read_only_fields=['id']
 
     def get_len_name(self,object):
         return len(object.name)
+    
+    def get_days(self,object):
+        today=timezone.now()
+        return (today- object.in_shelter_date).days
 
       #feild level validation
     def validate_name(self,value):
@@ -34,34 +34,14 @@ class BreedSerializer(serializers.ModelSerializer):
         return data
 
 
-# class BreedSerializer(serializers.Serializer):
-
-    # id=serializers.IntegerField(read_only=True)
-    # name=serializers.CharField(max_length=100,required=True)
-    # breed=serializers.CharField(max_length=100,required=False)
-    # age=serializers.IntegerField(required=False,validators=[age_weight])
-    # weight=serializers.FloatField(required=False,validators=[age_weight])
-
-    # def create(self,validated_data):
-    #     return Breed.objects.create(**validated_data) 
+class Prev_ownerSerilaizer(serializers.ModelSerializer):
+    class Meta:
+        model=Prev_Owner
+        fields="__all__"
+        read_only_fields=['id']
+        
+    def validate_phone(self,value):
+        if value==0:
+            raise serilaizers.ValidateError("invalid phone number")
+        return value
     
-    # def update(self,instance,data):
-    #     instance.name=data.get('name',instance.name)
-    #     instance.breed=data.get('breed',instance.breed)
-    #     instance.age=data.get('age',instance.age)
-    #     instance.weight=data.get('weight',instance.weight)
-    #     instance.save()
-
-    #     return instance
-    
-    # #feild level validation
-    # def validate_name(self,value):
-    #     if len(value)<3:
-    #         raise serializers.ValidationError("Name must be at least 3 characters long")
-    #     return value
-    
-    # #object level validations
-    # def validate(self,data):
-    #     if data.get("name")==data.get('breed'):
-    #         raise serializers.ValidationError("Name and breed cannot be same")
-    #     return data
