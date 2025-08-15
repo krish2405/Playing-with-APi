@@ -8,6 +8,7 @@ def age_weight(value):
     return value
 
 class BreedSerializer(serializers.Serializer):
+    id=serializers.IntegerField(read_only=True)
     name=serializers.CharField(max_length=100,required=True)
     breed=serializers.CharField(max_length=100,required=False)
     age=serializers.IntegerField(required=False,validators=[age_weight])
