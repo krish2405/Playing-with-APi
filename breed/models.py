@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 # Create your models here.
 
 class Prev_Owner(models.Model):
@@ -16,7 +17,8 @@ class Dogs_Info(models.Model):
     breed=models.CharField(max_length=100)
     age=models.IntegerField()
     weight=models.FloatField()
-    in_shelter_date=models.DateTimeField(auto_now_add=True)
+    in_shelter_date=models.DateTimeField(timezone.now)
+    prev_owner=models.ForeignKey(Prev_Owner,related_name='dogs',on_delete=models.CASCADE,null=True,blank=True)
     adopted=models.BooleanField(default=False)
     
     

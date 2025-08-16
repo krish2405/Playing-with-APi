@@ -35,6 +35,7 @@ class DogInfoSerializer(serializers.ModelSerializer):
 
 
 class Prev_ownerSerilaizer(serializers.ModelSerializer):
+    dogs=DogInfoSerializer(many=True,read_only=True)
     class Meta:
         model=Prev_Owner
         fields="__all__"
