@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 class AllDogsAV(APIView):
     def get(self,request):
         dogs=Dogs_Info.objects.all()
-        serializer=DogInfoSerializer(dogs,many=True)
+        serializer=DogInfoSerializer(dogs,many=True,context={'request':request})
         return Response(serializer.data,status='200')
     
 
@@ -23,11 +23,11 @@ class AllDogsAV(APIView):
 class DogBYidAV(APIView):
     def get(self,request,pk):
         try:
-            dog=Dogs_Info.objects.get(pk=pk)
+            dog=Dogs_Info.objects.get(pk=pk,)
         except Dogs_Info.DoesNotExist:
             return Response(status=404)
         
-        serializer=DogInfoSerializer(dog)
+        serializer=DogInfoSerializer(dog,context={'request':request})
         return Response(serializer.data,status=200)
     
 
@@ -60,7 +60,7 @@ class Prev_OwnerAV(APIView):
         except Prev_Owner.DoesNotExist:
             return Response(status="400")
             
-        serializerOW=Prev_ownerSerilaizer(PreV_ownerlist,many=True)
+        serializerOW=Prev_ownerSerilaizer(PreV_ownerlist,many=True,context={'request':request})
         return Response(serializerOW.data,status="200")
     
     def post(self,request):
@@ -76,7 +76,7 @@ class Owner_detailAV(APIView):
             owner=Prev_Owner.objects.get(pk=pk)
         except Prev_Owner.DoesNotExist:
             return Response(status="404")
-        serializerOW=Prev_ownerSerilaizer(owner)
+        serializerOW=Prev_ownerSerilaizer(owner,context={'request':request})
         return Response(serializerOW.data,status="200")
         
         
@@ -91,6 +91,8 @@ class Owner_detailAV(APIView):
             serializerOW.save()
             return Response(serializerOW.data,status="200")
         return Response(serializerOW.errors,status="401")
+    
+
             
         
         

@@ -34,12 +34,15 @@ class DogInfoSerializer(serializers.ModelSerializer):
         return data
 
 
-class Prev_ownerSerilaizer(serializers.ModelSerializer):
-    dogs=DogInfoSerializer(many=True,read_only=True)
+class Prev_ownerSerilaizer(serializers.HyperlinkedModelSerializer):
+    dogs=serializers.HyperlinkedRelatedField(many=True,read_only=True,view_name='dogs_by_id')
     class Meta:
         model=Prev_Owner
         fields="__all__"
-        read_only_fields=['id']
+        # read_only_fields=['id']
+        extra_kwargs = {
+            'url': {'view_name': 'owner_by_id'}  # must match urls.py
+        }
         
     def validate_phone(self,value):
         if value==0:
