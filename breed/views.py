@@ -1,9 +1,10 @@
 from django.shortcuts import render
-from .models import Dogs_Info,Prev_Owner
-from .serializer import DogInfoSerializer,Prev_ownerSerilaizer
+from .models import Dogs_Info,Prev_Owner,Liked_Dogs
+from .serializer import DogInfoSerializer,Prev_ownerSerilaizer,Liked_DogSerializer
 from rest_framework.response import Response
 # from rest_framework.decorators import api_view
 from rest_framework.views import APIView
+from rest_framework import mixins,generics
 
 
 class AllDogsAV(APIView):
@@ -91,6 +92,19 @@ class Owner_detailAV(APIView):
             serializerOW.save()
             return Response(serializerOW.data,status="200")
         return Response(serializerOW.errors,status="401")
+
+class Liked_DogAV(mixins.ListModelMixin,
+                  mixins.CreateModelMixin,generics.GenericAPIView):
+    
+    queryset=Liked_Dogs.objects.all()
+    serializer_class=Liked_DogSerializer
+    
+    def get(self,request,*args,**kwargs):
+        return self.list(request,*args,**kwargs)
+    
+    def post(self,request,*args,**kwargs):
+        return self.create(request,*args,**kwargs)
+
     
 
             

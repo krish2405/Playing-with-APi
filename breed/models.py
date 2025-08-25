@@ -24,3 +24,15 @@ class Dogs_Info(models.Model):
     
     def __str__(self):
         return f"{self.name} of {self.breed}"
+
+
+class Liked_Dogs(models.Model):
+    dog=models.ForeignKey(Dogs_Info,related_name='liked_dogs',on_delete=models.CASCADE)
+    liked_by=models.CharField(max_length=30)
+    active=models.BooleanField(default=True)
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
+    liked=models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.liked_by} liked {self.dog.name}'

@@ -1,10 +1,26 @@
 from rest_framework import serializers,validators
-from .models import Prev_Owner,Dogs_Info
+from .models import Prev_Owner,Dogs_Info,Liked_Dogs
 from datetime import datetime
 from django.utils import timezone
 
+
+
+class Liked_DogSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model=Liked_Dogs
+        fields="__all__"
+        read_only_fields=['id','created_at','updated_at']
+
+    def validate_active(self,value):
+        if value is False:
+            raise serializers.ValidationError("Active must be True")
+        return value
+
+    
 class DogInfoSerializer(serializers.ModelSerializer):
 
+    liked_dogs=Liked_DogSerializer(many=True,read_only=True)
     len_name=serializers.SerializerMethodField(method_name="get_len_name")
     day_in_shelter=serializers.SerializerMethodField(method_name="get_days")
     
@@ -19,7 +35,7 @@ class DogInfoSerializer(serializers.ModelSerializer):
     
     def get_days(self,object):
         today=timezone.now()
-        return (today- object.in_shelter_date).days
+        return (today - object.in_shelter_date).days
 
       #feild level validation
     def validate_name(self,value):
@@ -46,6 +62,6 @@ class Prev_ownerSerilaizer(serializers.HyperlinkedModelSerializer):
         
     def validate_phone(self,value):
         if value==0:
-            raise serilaizers.ValidateError("invalid phone number")
+            raise serializers.ValidateError("invalid phone number")
         return value
     
