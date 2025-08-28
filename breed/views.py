@@ -1,13 +1,18 @@
 from django.shortcuts import render
 from .models import Dogs_Info,Prev_Owner,Liked_Dogs
+from django.contrib.auth.models import User
 from .serializer import DogInfoSerializer,Prev_ownerSerilaizer,Liked_DogSerializer
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 # from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework import mixins,generics
+from breed import serializer
+from rest_framework import permissions
 
 
 class AllDogsAV(APIView):
+    permission_classes=[permissions.IsAuthenticated]
     def get(self,request):
         dogs=Dogs_Info.objects.all()
         serializer=DogInfoSerializer(dogs,many=True,context={'request':request})
@@ -93,18 +98,54 @@ class Owner_detailAV(APIView):
             return Response(serializerOW.data,status="200")
         return Response(serializerOW.errors,status="401")
 
-class Liked_DogAV(mixins.ListModelMixin,
-                  mixins.CreateModelMixin,generics.GenericAPIView):
+# class Liked_DogAV(mixins.ListModelMixin,
+#                   mixins.CreateModelMixin,generics.GenericAPIView):
     
-    queryset=Liked_Dogs.objects.all()
+#     queryset=Liked_Dogs.objects.all()
+#     serializer_class=Liked_DogSerializer
+    
+#     def get(self,request,*args,**kwargs):
+#         return self.list(request,*args,**kwargs)
+    
+#     def post(self,request,*args,**kwargs):
+#         return self.create(request,*args,**kwargs)
+
+class Liked_DogList(generics.ListAPIView):
     serializer_class=Liked_DogSerializer
     
-    def get(self,request,*args,**kwargs):
-        return self.list(request,*args,**kwargs)
-    
-    def post(self,request,*args,**kwargs):
-        return self.create(request,*args,**kwargs)
+    def get_queryset(self):
+        dog_id=self.kwargs['pk']
+        return Liked_Dogs.objects.filter(dog__id=dog_id,active=True,liked=True)
 
+class Liked_create(generics.CreateAPIView):
+    serializer_class=Liked_DogSerializer
+
+    def get_queryset(self):
+        return Liked_Dogs.objects.all()
+
+    def perform_create(self, serializer):
+        dog_id=self.kwargs['pk']
+        dog=Dogs_Info.objects.get(id=dog_id)
+        curr_user=self.request.user
+        liked_queryset=Liked_Dogs.objects.filter(dog=dog,liked_by=curr_user)
+        if liked_queryset.exists():
+            raise ValidationError("You have already liked this dog")
+        else:
+            serializer.save(dog=dog,likeed_by=curr_user)
+
+
+class update_like(generics.UpdateAPIView):
+    serializer_class=Liked_DogSerializer
+    def get_queryset(self):
+        dog_id=self.kwargs['pk']
+        return Liked_Dogs.objects.filter(dog__id=dog_id,active=True,liked=True)
+    
+    
+    def perform_update(self,serializer):
+        serializer.save(active=True)
+        
+
+        
     
 
             

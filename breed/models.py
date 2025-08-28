@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
 # Create your models here.
 
 class Prev_Owner(models.Model):
@@ -28,7 +29,7 @@ class Dogs_Info(models.Model):
 
 class Liked_Dogs(models.Model):
     dog=models.ForeignKey(Dogs_Info,related_name='liked_dogs',on_delete=models.CASCADE)
-    liked_by=models.CharField(max_length=30)
+    liked_by=models.ForeignKey(User,related_name='liked_User',on_delete=models.CASCADE)
     active=models.BooleanField(default=True)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)

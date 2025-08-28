@@ -22,4 +22,5 @@ from breed import urls as breed_urls
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('dogs/',include(breed_urls)),
+    path('api-auth/',include('rest_framework.urls')),
 ]

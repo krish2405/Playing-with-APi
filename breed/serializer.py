@@ -2,10 +2,12 @@ from rest_framework import serializers,validators
 from .models import Prev_Owner,Dogs_Info,Liked_Dogs
 from datetime import datetime
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 
 
 class Liked_DogSerializer(serializers.ModelSerializer):
+    liked_by=serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
 
     class Meta:
         model=Liked_Dogs
@@ -20,10 +22,10 @@ class Liked_DogSerializer(serializers.ModelSerializer):
     
 class DogInfoSerializer(serializers.ModelSerializer):
 
-    liked_dogs=Liked_DogSerializer(many=True,read_only=True)
+    liked_dogs=serializers.PrimaryKeyRelatedField(many=True,read_only=True)
     len_name=serializers.SerializerMethodField(method_name="get_len_name")
     day_in_shelter=serializers.SerializerMethodField(method_name="get_days")
-    
+    prev_owner=serializers.StringRelatedField(read_only=True) 
     class Meta:
         model=Dogs_Info
         fields="__all__"
