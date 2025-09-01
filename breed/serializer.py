@@ -7,8 +7,8 @@ from django.contrib.auth.models import User
 
 
 class Liked_DogSerializer(serializers.ModelSerializer):
-    liked_by=serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-
+    
+    dog=serializers.StringRelatedField(read_only=True)
     class Meta:
         model=Liked_Dogs
         fields="__all__"
@@ -22,7 +22,7 @@ class Liked_DogSerializer(serializers.ModelSerializer):
     
 class DogInfoSerializer(serializers.ModelSerializer):
 
-    liked_dogs=serializers.PrimaryKeyRelatedField(many=True,read_only=True)
+    liked=serializers.PrimaryKeyRelatedField(many=True,read_only=True)
     len_name=serializers.SerializerMethodField(method_name="get_len_name")
     day_in_shelter=serializers.SerializerMethodField(method_name="get_days")
     prev_owner=serializers.StringRelatedField(read_only=True) 
@@ -30,7 +30,7 @@ class DogInfoSerializer(serializers.ModelSerializer):
         model=Dogs_Info
         fields="__all__"
         # fields=['id','name','breed','len_name']
-        read_only_fields=['id']
+        read_only_fields=['id','in_shelter_date']
 
     def get_len_name(self,object):
         return len(object.name)

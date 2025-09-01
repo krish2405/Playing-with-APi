@@ -28,7 +28,7 @@ class Dogs_Info(models.Model):
 
 
 class Liked_Dogs(models.Model):
-    dog=models.ForeignKey(Dogs_Info,related_name='liked_dogs',on_delete=models.CASCADE)
+    dog=models.ForeignKey(Dogs_Info,related_name='liked_dog',on_delete=models.CASCADE)
     liked_by=models.ForeignKey(User,related_name='liked_User',on_delete=models.CASCADE)
     active=models.BooleanField(default=True)
     created_at=models.DateTimeField(auto_now_add=True)
