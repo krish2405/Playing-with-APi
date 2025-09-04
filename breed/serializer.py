@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 class Liked_DogSerializer(serializers.ModelSerializer):
     
     dog=serializers.StringRelatedField(read_only=True)
+    liked_by=serializers.StringRelatedField(read_only=True)
     class Meta:
         model=Liked_Dogs
         fields="__all__"
