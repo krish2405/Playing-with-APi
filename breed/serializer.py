@@ -1,6 +1,7 @@
 from rest_framework import serializers,validators
 from .models import Prev_Owner,Dogs_Info,Liked_Dogs
 from datetime import datetime
+from rest_framework import serializers
 from django.utils import timezone
 from django.contrib.auth.models import User
 
@@ -32,7 +33,8 @@ class DogInfoSerializer(serializers.ModelSerializer):
         fields="__all__"
         # fields=['id','name','breed','len_name']
         read_only_fields=['id','in_shelter_date']
-
+  
+#    serializer method field is used to get custom feilds as output like len of name or days in shelter
     def get_len_name(self,object):
         return len(object.name)
     
@@ -40,7 +42,7 @@ class DogInfoSerializer(serializers.ModelSerializer):
         today=timezone.now()
         return (today - object.in_shelter_date).days
 
-      #feild level validation
+      #feild level validation used to validate single feild from the input data
     def validate_name(self,value):
         if len(value)<3:
             raise serializers.ValidationError("Name must be at least 3 characters long")
@@ -65,6 +67,6 @@ class Prev_ownerSerilaizer(serializers.HyperlinkedModelSerializer):
         
     def validate_phone(self,value):
         if value==0:
-            raise serializers.ValidateError("invalid phone number")
+            raise serializers.ValidationError("invalid phone number")
         return value
     

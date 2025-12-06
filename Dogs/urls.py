@@ -17,10 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from breed import urls as breed_urls
+from userapp import urls as userapp_urls
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('dogs/',include(breed_urls)),
-    path('api-auth/',include('rest_framework.urls')),
+    # path('api-auth/',include('rest_framework.urls')),
+    path('users/',include(userapp_urls)),
 ]
